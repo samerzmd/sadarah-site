@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sadarah — Your game, in one place</title>
+<meta name="description" content="Sadarah is the player companion app for modern sports academies. One rating across every academy, live leaderboards, sessions, achievements and more — built to keep players coming back." />
+<meta property="og:title" content="Sadarah — Your game, in one place" />
+<meta property="og:description" content="One skill rating across every academy. Climb the leaderboard, join sessions, unlock badges, and own your top spot." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4faf8; --bg-soft:#ffffff; --card:#ffffff; --card-2:#eef6f3;
+    --line:#dceae6; --line-soft:#e9f2ef;
+    --text:#10302a; --muted:#52706a; --faint:#7d948d;
+    --primary:#0c8d7e; --primary-2:#0a6f63; --primary-soft:#0a5a52;
+    --gold:#ee6a2b; --gold-2:#dc451c;
+    --green:#1faf74; --red:#e1503f; --violet:#e88a2c;
+    --radius:18px; --radius-lg:26px;
+    --shadow:0 18px 44px -22px rgba(16,48,42,.28);
+    --maxw:1160px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  h1,h2,h3,h4,.display{font-family:"Plus Jakarta Sans",sans-serif;letter-spacing:-.02em;line-height:1.1}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .accent{color:var(--gold)}
+  .grad-text{background:linear-gradient(105deg,var(--primary-2) 0%,var(--primary) 40%,var(--gold) 105%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ---------- background glow ---------- */
+  .glow{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.16}
+  .glow::before{width:620px;height:620px;background:radial-gradient(circle,#12a594,transparent 70%);top:-220px;left:-120px}
+  .glow::after{width:560px;height:560px;background:radial-gradient(circle,#ee6a2b,transparent 70%);top:380px;right:-180px;opacity:.12}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+      background:rgba(255,255,255,.82);border-bottom:1px solid var(--line-soft)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:"Plus Jakarta Sans";font-weight:800;font-size:1.2rem}
+  .brand .mark{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+    background:radial-gradient(circle at 50% 120%,var(--primary) 0%,var(--primary-2) 55%,#063a35 100%);
+    color:#fff;font-size:1.05rem;border:1.5px solid rgba(242,106,46,.55);
+    box-shadow:0 6px 16px -4px rgba(18,165,148,.6),inset 0 0 0 1px rgba(255,255,255,.06)}
+  .brand .mark svg{width:17px;height:17px;display:block}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{color:var(--muted);font-size:.92rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;border-radius:999px;
+    padding:11px 22px;font-size:.92rem;cursor:pointer;border:1px solid transparent;transition:.2s;white-space:nowrap}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;
+    box-shadow:0 10px 26px -8px rgba(12,125,114,.7)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -8px rgba(12,125,114,.8)}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--primary);background:rgba(18,165,148,.08)}
+  .nav-links a{white-space:nowrap}
+  .lang-switch{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;
+    font-weight:800;color:var(--primary-2);font-size:1.05rem;transition:.2s;background:var(--card)}
+  .lang-switch:hover{border-color:var(--primary);background:rgba(18,165,148,.08)}
+  @media(max-width:980px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:78px 0 60px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(18,165,148,.1);
+    border:1px solid rgba(18,165,148,.32);color:#0a6f63;font-weight:600;font-size:.8rem;
+    padding:7px 14px;border-radius:999px;margin-bottom:22px}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(47,201,138,.25)}
+  .hero h1{font-size:clamp(2.5rem,5.4vw,4.1rem);font-weight:800;margin-bottom:20px}
+  .hero p.lead{font-size:1.18rem;color:var(--muted);max-width:540px;margin-bottom:30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .hero-meta{display:flex;gap:28px;margin-top:34px;flex-wrap:wrap}
+  .hero-meta .m b{font-family:"Plus Jakarta Sans";font-size:1.5rem;font-weight:800;display:block}
+  .hero-meta .m span{color:var(--faint);font-size:.82rem}
+  .sub-en{font-size:.9rem;color:var(--faint)}
+  .arabic{font-family:"Plus Jakarta Sans";direction:rtl}
+
+  /* phone */
+  .phone-stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:540px}
+  .phone{width:286px;border-radius:42px;background:#05070f;padding:11px;
+    box-shadow:0 40px 80px -24px rgba(0,0,0,.85),0 0 0 1px var(--line);position:relative;z-index:2}
+  .phone .screen{border-radius:32px;overflow:hidden;background:#f5f7fb;height:580px;position:relative}
+  .phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:24px;
+    background:#05070f;border-radius:0 0 16px 16px;z-index:5}
+  .float-card{position:absolute;z-index:3;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:13px 16px;box-shadow:var(--shadow);backdrop-filter:blur(8px)}
+  .fc-1{top:42px;left:-26px;animation:float 5s ease-in-out infinite}
+  .fc-2{bottom:64px;right:-30px;animation:float 5.6s ease-in-out infinite .6s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  /* in-screen mock UI (rating screen) */
+  .m-app{height:100%;background:linear-gradient(180deg,#eef3fc,#f6f8fd);color:#101828;
+    font-family:"Inter";display:flex;flex-direction:column}
+  .m-top{padding:38px 18px 16px;background:linear-gradient(135deg,#0c7d72,#12a594);color:#fff}
+  .m-top .hi{font-size:.78rem;opacity:.85}
+  .m-top .nm{font-family:"Plus Jakarta Sans";font-weight:700;font-size:1.15rem}
+  .m-rating{margin-top:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+    border-radius:16px;padding:14px;display:flex;align-items:center;justify-content:space-between}
+  .m-rating .score{font-family:"Plus Jakarta Sans";font-weight:800;font-size:2rem;line-height:1}
+  .m-rating .lbl{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
+  .m-tier{background:var(--gold);color:#3a2c05;font-weight:800;font-size:.7rem;padding:5px 11px;border-radius:999px}
+  .m-body{padding:14px 16px;display:flex;flex-direction:column;gap:11px;flex:1}
+  .m-row{background:#fff;border:1px solid #e7ecf5;border-radius:13px;padding:11px 13px;
+    display:flex;align-items:center;justify-content:space-between;font-size:.82rem}
+  .m-row .rk{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-weight:800;font-size:.72rem;color:#fff}
+  .m-row .who{display:flex;align-items:center;gap:9px;font-weight:600}
+  .m-row .pts{font-weight:700;color:#0c7d72;font-size:.78rem}
+  .m-row.me{border-color:#bfeae2;background:linear-gradient(90deg,#e6fbf6,#fff)}
+  .m-bars{display:flex;gap:5px;align-items:flex-end;height:30px}
+  .m-bars i{flex:1;background:linear-gradient(180deg,#12a594,#6fe0d0);border-radius:3px;display:block}
+
+  @media(max-width:880px){
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .phone-stage{order:-1;min-height:auto;margin-bottom:10px}
+    .float-card{display:none}
+  }
+
+  /* ---------- section scaffolding ---------- */
+  section{padding:84px 0;position:relative}
+  .eyebrow{color:var(--gold);font-weight:700;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+  .sec-head{max-width:680px;margin-bottom:50px}
+  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head h2{font-size:clamp(2rem,3.6vw,2.9rem);font-weight:800;margin-bottom:16px}
+  .sec-head p{color:var(--muted);font-size:1.1rem}
+
+  /* ---------- rating spotlight ---------- */
+  .rating-band{background:linear-gradient(135deg,#ecf6f3,#f8fcfb);border:1px solid var(--line);
+    border-radius:var(--radius-lg);padding:46px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;overflow:hidden;position:relative}
+  .rating-band::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+    background:radial-gradient(circle,rgba(242,106,46,.16),transparent 70%);top:-120px;right:-80px}
+  .ring{position:relative;width:230px;height:230px;margin:0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .center b{font-family:"Plus Jakarta Sans";font-size:3rem;font-weight:800;line-height:1}
+  .ring .center small{color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.78rem;margin-top:6px}
+  .ring .center em{color:var(--faint);font-style:normal;font-size:.78rem}
+  .rb-points li{list-style:none;display:flex;gap:13px;margin-bottom:16px;align-items:flex-start}
+  .rb-points .ic{flex:0 0 38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:rgba(18,165,148,.14);border:1px solid rgba(18,165,148,.3);font-size:1.1rem}
+  .rb-points b{display:block;font-family:"Plus Jakarta Sans";font-size:1.02rem;margin-bottom:2px}
+  .rb-points span{color:var(--muted);font-size:.92rem}
+  @media(max-width:880px){.rating-band{grid-template-columns:1fr;padding:30px}}
+
+  /* ---------- value grid (angles) ---------- */
+  .grid{display:grid;gap:20px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .card-ui{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.25s;position:relative;overflow:hidden}
+  .card-ui:hover{transform:translateY(-4px);border-color:rgba(18,165,148,.5);box-shadow:0 22px 44px -22px rgba(12,125,114,.55)}
+  .card-ui .ic{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:1.35rem;margin-bottom:16px;
+    background:rgba(18,165,148,.13);border:1px solid rgba(18,165,148,.28)}
+  .card-ui h3{font-size:1.18rem;margin-bottom:8px}
+  .card-ui p{color:var(--muted);font-size:.95rem}
+  @media(max-width:880px){.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+
+  /* ---------- personas ---------- */
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:34px;justify-content:center}
+  .tab{border:1px solid var(--line);background:var(--card);color:var(--muted);font-weight:600;
+    padding:11px 20px;border-radius:999px;cursor:pointer;font-size:.92rem;transition:.2s;display:flex;align-items:center;gap:9px}
+  .tab .e{font-size:1.05rem}
+  .tab[aria-selected="true"]{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent;
+    box-shadow:0 10px 26px -10px rgba(12,125,114,.7)}
+  .panel{display:none;animation:fade .35s ease}
+  .panel[data-active="true"]{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .persona{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center;
+    background:linear-gradient(135deg,#ecf6f3,#f8fcfb);border:1px solid var(--line);border-radius:var(--radius-lg);padding:40px}
+  .persona h3{font-size:1.7rem;margin-bottom:8px}
+  .persona .role-tag{color:var(--gold);font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .persona p.intro{color:var(--muted);margin-bottom:22px}
+  .benefit{display:flex;gap:13px;margin-bottom:15px;align-items:flex-start}
+  .benefit .chk{flex:0 0 24px;height:24px;border-radius:50%;background:rgba(47,201,138,.16);
+    border:1px solid rgba(47,201,138,.4);display:grid;place-items:center;color:var(--green);font-size:.8rem;font-weight:800}
+  .benefit b{font-family:"Plus Jakarta Sans"}
+  .benefit span{color:var(--muted);font-size:.92rem;display:block}
+  .persona-visual{background:#eef6f3;border:1px solid var(--line);border-radius:18px;padding:24px;min-height:280px}
+  @media(max-width:880px){.persona{grid-template-columns:1fr;padding:26px}}
+
+  /* ---------- engagement / attachment ---------- */
+  .eng-hero{text-align:center;max-width:760px;margin:0 auto 54px}
+  .loop{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:64px}
+  .loop .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 16px;text-align:center;position:relative}
+  .loop .step .n{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+    color:#fff;font-weight:800;display:grid;place-items:center;margin:0 auto 12px;font-size:.85rem}
+  .loop .step b{display:block;font-family:"Plus Jakarta Sans";font-size:.98rem;margin-bottom:5px}
+  .loop .step span{color:var(--faint);font-size:.8rem}
+  .loop .step::after{content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:1.1rem}
+  .loop .step:last-child::after{display:none}
+  @media(max-width:880px){.loop{grid-template-columns:1fr 1fr}.loop .step::after{display:none}}
+
+  .hooks{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .hook{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .hook .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .hook .badge{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:1.3rem}
+  .hook h4{font-size:1.12rem}
+  .hook p{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+  .hook .why{font-size:.82rem;color:var(--gold);font-weight:600;background:rgba(242,106,46,.08);
+    border:1px solid rgba(242,106,46,.22);border-radius:10px;padding:9px 12px}
+  .hook .why b{color:var(--gold-2)}
+  @media(max-width:880px){.hooks{grid-template-columns:1fr}}
+
+  /* ---------- tier ladder ---------- */
+  .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:10px}
+  .tier{border-radius:16px;padding:22px 16px;text-align:center;position:relative;border:1px solid var(--line);overflow:hidden}
+  .tier .coin{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:1.5rem;
+    box-shadow:inset 0 -4px 8px rgba(0,0,0,.3),0 6px 14px -6px rgba(0,0,0,.6)}
+  .tier b{font-family:"Plus Jakarta Sans";display:block;font-size:1.05rem}
+  .tier span{color:var(--faint);font-size:.78rem}
+  .tier.bronze .coin{background:linear-gradient(135deg,#c87f44,#8a5524)}
+  .tier.silver .coin{background:linear-gradient(135deg,#d7dde6,#9aa6b5)}
+  .tier.gold .coin{background:linear-gradient(135deg,#f7d067,#d99a26)}
+  .tier.plat .coin{background:linear-gradient(135deg,#7fe6e0,#36a8a0)}
+  .tier.elite .coin{background:linear-gradient(135deg,#a78bfa,#6d4ee0)}
+  .tier.elite{border-color:rgba(167,139,250,.5);box-shadow:0 0 0 1px rgba(167,139,250,.25),0 18px 40px -20px rgba(124,92,240,.6)}
+  @media(max-width:880px){.ladder{grid-template-columns:1fr 1fr 1fr}}
+
+  /* ---------- upcoming / roadmap ---------- */
+  .soon{position:relative;background:linear-gradient(135deg,#0d3b35,#0a5a52 55%,#7a2a12);
+    border-radius:var(--radius-lg);padding:64px 44px;overflow:hidden;border:1px solid rgba(18,165,148,.4)}
+  .soon::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle,rgba(242,106,46,.28),transparent 70%);top:-200px;right:-120px}
+  .soon::after{content:"";position:absolute;width:460px;height:460px;border-radius:50%;
+    background:radial-gradient(circle,rgba(18,165,148,.32),transparent 70%);bottom:-220px;left:-120px}
+  .soon-head{text-align:center;max-width:680px;margin:0 auto 42px;position:relative;z-index:2}
+  .soon-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);color:#fff;font-weight:700;font-size:.78rem;letter-spacing:.1em;
+    text-transform:uppercase;padding:7px 15px;border-radius:999px;margin-bottom:18px}
+  .soon-head h2{color:#fff;font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:800;margin-bottom:14px}
+  .soon-head p{color:#d7efe9;font-size:1.12rem}
+  .soon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;position:relative;z-index:2}
+  .soon-card{position:relative;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+    border-radius:var(--radius);padding:24px;overflow:hidden;min-height:188px}
+  .soon-card .lock{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:10px;
+    display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font-size:.95rem;z-index:3}
+  .soon-card .ico{font-size:1.5rem;margin-bottom:14px;filter:blur(3px);opacity:.85}
+  .soon-card .blur{filter:blur(6px);user-select:none;pointer-events:none}
+  .soon-card .blur h4{color:#fff;font-size:1.18rem;margin-bottom:10px}
+  .soon-card .blur .ln{height:9px;border-radius:5px;background:rgba(255,255,255,.4);margin-bottom:9px}
+  .soon-card .blur .ln.s{width:62%}
+  .soon-card .tease{position:absolute;left:0;right:0;bottom:0;padding:14px 24px;font-size:.82rem;font-weight:700;
+    color:#fff;background:linear-gradient(0deg,rgba(8,30,27,.85),transparent);z-index:3}
+  .soon-foot{text-align:center;color:#cdeee8;margin-top:36px;position:relative;z-index:2;font-size:1.02rem}
+  @media(max-width:880px){.soon{padding:44px 24px}.soon-grid{grid-template-columns:1fr}}
+
+  /* ---------- trust ---------- */
+  .trust{background:linear-gradient(135deg,#ecf6f3,#f8fcfb);border:1px solid var(--line);border-radius:var(--radius-lg);
+    padding:44px;text-align:center}
+  .trust .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:34px}
+  .trust .stat b{font-family:"Plus Jakarta Sans";font-size:2.3rem;font-weight:800;display:block;
+    background:linear-gradient(120deg,var(--primary),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .trust .stat span{color:var(--muted);font-size:.88rem}
+  @media(max-width:880px){.trust .stats{grid-template-columns:1fr 1fr}}
+
+  /* ---------- sports ---------- */
+  .sports{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .sport{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:999px;padding:12px 22px;font-weight:600;font-size:.96rem}
+  .sport .e{font-size:1.3rem}
+
+  /* ---------- CTA ---------- */
+  .cta{background:linear-gradient(135deg,var(--primary-2),#0a5a52 55%,#7a2a12);border-radius:var(--radius-lg);
+    padding:60px;text-align:center;position:relative;overflow:hidden;border:1px solid rgba(18,165,148,.4)}
+  .cta::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle,rgba(242,106,46,.22),transparent 70%);top:-200px;right:-100px}
+  .cta h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:14px;position:relative;color:#fff}
+  .cta p{color:#cdeee8;font-size:1.15rem;max-width:560px;margin:0 auto 28px;position:relative}
+  .store-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
+  .store{display:flex;align-items:center;gap:11px;background:#05070f;border:1px solid rgba(255,255,255,.18);
+    border-radius:14px;padding:12px 20px;transition:.2s}
+  .store:hover{transform:translateY(-3px);background:#0a0f1c}
+  .store .e{font-size:1.6rem}
+  .store small{display:block;font-size:.68rem;color:var(--muted)}
+  .store b{font-family:"Plus Jakarta Sans";font-size:1rem}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line-soft);padding:46px 0 36px;margin-top:30px}
+  .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .foot .links{display:flex;gap:40px;flex-wrap:wrap}
+  .foot .col b{font-family:"Plus Jakarta Sans";font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);display:block;margin-bottom:12px}
+  .foot .col a{display:block;color:var(--muted);font-size:.92rem;margin-bottom:9px;transition:.2s}
+  .foot .col a:hover{color:var(--text)}
+  .foot-bottom{margin-top:34px;padding-top:22px;border-top:1px solid var(--line-soft);
+    display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--faint);font-size:.85rem}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#"><span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 2c.6 2.8-.9 4.3-2.4 5.8C8.4 9.4 6.7 11 6.7 14a5.3 5.3 0 0 0 10.6.3c0-2.2-1-3.6-1.9-4.8-.3 1-.9 1.6-1.7 2 .6-2.2-.3-4.4-1.2-6-.5-.9-1.2-1.6-1-3.5Z" fill="#f26a2e"/><path d="M12.2 11c.3 1.4-.5 2.1-1.2 2.9-.6.7-1.3 1.4-1.3 2.6a2.6 2.6 0 0 0 5.2.1c0-1-.5-1.7-1-2.4-.2.5-.5.8-.9 1 .3-1.1-.1-2.2-.6-3-.2-.4-.4-.7-.2-1.2Z" fill="#ffd34d"/></svg></span> Sadarah</a>
+    <div class="nav-links">
+      <a href="#rating">The Rating</a>
+      <a href="#value">Why it matters</a>
+      <a href="#personas">For you</a>
+      <a href="#engagement">Engagement</a>
+      <a href="#tiers">Tiers</a>
+      <a href="#next">What's next</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="ar.html" class="lang-switch" title="العربية">ع</a>
+      <a href="#download" class="btn btn-primary">Get the app</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill"><span class="dot"></span> One rating across every sport and academy</span>
+      <h1>Your game, your rivals,<br><span class="grad-text">your top spot.</span></h1>
+      <p class="lead">Sadarah is the player companion app for modern sports academies. Every match feeds one rating that follows you everywhere — so progress is always visible, and the next match always matters.</p>
+      <div class="hero-cta">
+        <a href="#download" class="btn btn-primary">📲 Download Sadarah</a>
+        <a href="#engagement" class="btn btn-ghost">See how it hooks players</a>
+      </div>
+      <div class="hero-meta">
+        <div class="m"><b>1</b><span>rating across all academies</span></div>
+        <div class="m"><b>Multi&#8209;sport</b><span>and growing</span></div>
+        <div class="m"><b class="accent">صدارة</b><span class="sub-en">Arabic for “the top spot”</span></div>
+      </div>
+    </div>
+
+    <div class="phone-stage">
+      <!-- floating proof cards -->
+      <div class="float-card fc-1">
+        <div style="font-size:.7rem;color:var(--faint);text-transform:uppercase;letter-spacing:.08em">Rating change</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <b style="font-family:'Plus Jakarta Sans';font-size:1.3rem">+24</b>
+          <span style="color:var(--green);font-weight:700;font-size:.85rem">▲ win streak ×3</span>
+        </div>
+      </div>
+      <div class="float-card fc-2">
+        <div style="font-size:.7rem;color:var(--faint);text-transform:uppercase;letter-spacing:.08em">New badge</div>
+        <div style="display:flex;align-items:center;gap:9px;margin-top:5px">
+          <span style="font-size:1.4rem">🏅</span>
+          <b style="font-family:'Plus Jakarta Sans';font-size:.98rem">Court Regular</b>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="m-app">
+            <div class="m-top">
+              <div class="hi">Welcome back,</div>
+              <div class="nm">Ahmad Khaled 👋</div>
+              <div class="m-rating">
+                <div>
+                  <div class="lbl">Sadarah Rating</div>
+                  <div class="score">1,486</div>
+                </div>
+                <div class="m-tier">GOLD III</div>
+              </div>
+            </div>
+            <div class="m-body">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <b style="font-family:'Plus Jakarta Sans';font-size:.95rem">Academy leaderboard</b>
+                <span style="font-size:.72rem;color:#0c7d72;font-weight:700">This week</span>
+              </div>
+              <div class="m-row"><div class="who"><span class="rk" style="background:#d99a26">1</span> Lara H.</div><span class="pts">1,612</span></div>
+              <div class="m-row me"><div class="who"><span class="rk" style="background:#0c7d72">4</span> You</div><span class="pts">1,486</span></div>
+              <div class="m-row"><div class="who"><span class="rk" style="background:#7c8aa5">5</span> Omar S.</div><span class="pts">1,455</span></div>
+              <div class="m-row" style="flex-direction:column;align-items:stretch;gap:8px">
+                <span style="font-size:.72rem;color:#667085;font-weight:600">Rating over last 8 matches</span>
+                <div class="m-bars"><i style="height:40%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:64%"></i><i style="height:58%"></i><i style="height:76%"></i><i style="height:70%"></i><i style="height:92%"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- RATING SPOTLIGHT -->
+<section id="rating">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The core idea</div>
+      <h2>One rating. Every academy. Always climbing.</h2>
+      <p>Most apps lock your progress inside one club. Sadarah gives every player a single skill score — the <b>Sadarah Rating</b> — that travels with them across academies, sports and seasons. It turns every casual match into a meaningful step.</p>
+    </div>
+
+    <div class="rating-band reveal">
+      <div>
+        <div class="ring">
+          <svg width="230" height="230" viewBox="0 0 230 230">
+            <circle cx="115" cy="115" r="100" fill="none" stroke="#dceae6" stroke-width="16"/>
+            <circle id="ringArc" cx="115" cy="115" r="100" fill="none" stroke="url(#g)" stroke-width="16"
+              stroke-linecap="round" stroke-dasharray="628" stroke-dashoffset="628"/>
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#12a594"/><stop offset="1" stop-color="#ee6a2b"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="center">
+            <b id="ringNum">0</b>
+            <small>Sadarah Rating</small>
+            <em>Gold · 78% to Platinum</em>
+          </div>
+        </div>
+      </div>
+      <ul class="rb-points">
+        <li><div class="ic">🔗</div><div><b>Portable across academies</b><span>Join a second or third academy and your rating comes with you — no starting over.</span></div></li>
+        <li><div class="ic">⚖️</div><div><b>Skill-based matchmaking</b><span>Sessions and matches pair players of similar rating, so games stay competitive and fun.</span></div></li>
+        <li><div class="ic">📈</div><div><b>Every match counts</b><span>Win or lose, each result moves the number — giving even practice games real stakes.</span></div></li>
+        <li><div class="ic">🌍</div><div><b>Academy &amp; global rankings</b><span>See exactly where you stand among your club and across the whole Sadarah network.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE FROM DIFFERENT ANGLES -->
+<section id="value" style="padding-top:30px">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <div class="eyebrow">Value from every angle</div>
+      <h2>One app, many reasons to open it</h2>
+      <p>Sadarah isn’t a single feature — it’s the player’s whole game in one place. Each piece adds a different kind of value.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card-ui reveal"><div class="ic">⭐</div><h3>Identity &amp; status</h3><p>Your rating and tier are a badge of identity. Players check it the way they check a credit score — it’s <em>theirs</em>, and it’s public.</p></div>
+      <div class="card-ui reveal"><div class="ic">🏆</div><h3>Competition</h3><p>Live academy and global leaderboards turn every week into a mini-season. There’s always someone just ahead to catch.</p></div>
+      <div class="card-ui reveal"><div class="ic">📅</div><h3>Convenience</h3><p>Discover and join training sessions and matches with one tap. No group chats, no spreadsheets — the schedule lives in your pocket.</p></div>
+      <div class="card-ui reveal"><div class="ic">📊</div><h3>Self-improvement</h3><p>Full match history, win rate and a rating chart show progress over time — proof the training is working.</p></div>
+      <div class="card-ui reveal"><div class="ic">🎖️</div><h3>Recognition</h3><p>Achievement badges mark milestones — first win, win streaks, loyalty, comebacks — so effort gets celebrated, not just results.</p></div>
+      <div class="card-ui reveal"><div class="ic">💳</div><h3>Frictionless money</h3><p>Academy wallet and subscription credits live in the app. Players see their balance and renew without chasing anyone.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section id="personas">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <div class="eyebrow">Built for everyone on the court</div>
+      <h2>What Sadarah does for you</h2>
+      <p>The same platform creates value for three very different people. Pick your role.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="player"><span class="e">🎾</span> Players</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="academy"><span class="e">🏟️</span> Academy owners</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="coach"><span class="e">🎛️</span> Session moderators</button>
+    </div>
+
+    <!-- PLAYER -->
+    <div class="panel" data-tab="player" data-active="true">
+      <div class="persona reveal">
+        <div>
+          <div class="role-tag">The player</div>
+          <h3>A reason to come back tomorrow</h3>
+          <p class="intro">For the player, Sadarah turns scattered training into a personal journey with a scoreboard. Their progress is finally visible — and shareable.</p>
+          <div class="benefit"><div class="chk">✓</div><div><b>See yourself improve</b><span>A rising rating and win rate are undeniable proof the work is paying off.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Always know what’s next</b><span>Upcoming sessions and open matches are one tap away — never miss a game.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Belong to something</b><span>Leaderboards and shared sessions create rivals, teammates and bragging rights.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Get recognized</b><span>Badges and tier promotions celebrate milestones publicly.</span></div></div>
+        </div>
+        <div class="persona-visual">
+          <div style="font-size:.72rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Player snapshot</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:12px">
+            <div><div style="color:var(--faint);font-size:.74rem">Current rating</div><b style="font-family:'Plus Jakarta Sans';font-size:1.7rem">1,486</b></div>
+            <div style="text-align:right"><span class="m-tier">GOLD III</span><div style="color:var(--green);font-size:.82rem;font-weight:700;margin-top:6px">+24 this week ▲</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:11px;padding:13px;text-align:center"><b style="font-family:'Plus Jakarta Sans';font-size:1.2rem">68%</b><div style="color:var(--faint);font-size:.72rem">Win rate</div></div>
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:11px;padding:13px;text-align:center"><b style="font-family:'Plus Jakarta Sans';font-size:1.2rem">42</b><div style="color:var(--faint);font-size:.72rem">Matches</div></div>
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:11px;padding:13px;text-align:center"><b style="font-family:'Plus Jakarta Sans';font-size:1.2rem">7</b><div style="color:var(--faint);font-size:.72rem">Badges</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESSION MODERATOR -->
+    <div class="panel" data-tab="coach">
+      <div class="persona reveal">
+        <div>
+          <div class="role-tag">The session moderator</div>
+          <h3>Balanced, fair games — every round</h3>
+          <p class="intro">Session moderators run the room. Sadarah's smart match-making sets up each round in one tap — keeping teams fresh, matchups fair, and ratings balanced across every court so nobody sits through a lopsided game.</p>
+          <div class="benefit"><div class="chk">✓</div><div><b>Smart &amp; Balanced Distribution</b><span>One tap builds the next round — it avoids repeating the previous round's teams, reduces player overlap, and keeps every court balanced by Sadarah Rating.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Fair games for everyone</b><span>Rating-aware pairing means no blowouts — players of similar level meet, so every match stays close, competitive and fun.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Fresh matchups, not the same four</b><span>Partners and opponents rotate round to round, so the session never feels repetitive.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Less setup, more play</b><span>Auto-balance, clear to bench, or keep lineups — your call, done in seconds instead of manual shuffling.</span></div></div>
+        </div>
+        <div class="persona-visual" style="background:#e9eef6">
+          <div style="font-size:.72rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Smart round set-up</div>
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;box-shadow:0 12px 30px -16px rgba(16,48,42,.35)">
+            <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:14px">
+              <div style="flex:0 0 38px;height:38px;border-radius:11px;background:rgba(18,165,148,.14);display:grid;place-items:center;font-size:1.1rem">✨</div>
+              <div>
+                <div style="font-family:'Plus Jakarta Sans';font-weight:800;color:#10302a;font-size:1.05rem;line-height:1.2">Set up Round 2</div>
+                <div style="color:#64748b;font-size:.8rem">Choose how this round should start.</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--primary);background:rgba(18,165,148,.07);border-radius:13px;padding:12px;display:flex;gap:11px;align-items:center;margin-bottom:9px">
+              <div style="flex:0 0 34px;height:34px;border-radius:9px;background:rgba(18,165,148,.16);display:grid;place-items:center;font-size:1rem">⚖️</div>
+              <div style="flex:1">
+                <div style="font-family:'Plus Jakarta Sans';font-weight:700;color:#10302a;font-size:.88rem">Smart &amp; Balanced Distribution</div>
+                <div style="color:#64748b;font-size:.74rem;line-height:1.35">Avoids repeating teams and reduces overlap while keeping ratings balanced.</div>
+              </div>
+              <div style="color:var(--primary);font-weight:800">›</div>
+            </div>
+            <div style="background:#f1f5f9;border-radius:13px;padding:12px;display:flex;gap:11px;align-items:center;margin-bottom:9px">
+              <div style="flex:0 0 34px;height:34px;border-radius:9px;background:#e2e8f0;display:grid;place-items:center;font-size:1rem">🧹</div>
+              <div style="flex:1"><div style="font-family:'Plus Jakarta Sans';font-weight:700;color:#10302a;font-size:.88rem">Clear all to bench</div></div>
+              <div style="color:#94a3b8;font-weight:800">›</div>
+            </div>
+            <div style="background:#f1f5f9;border-radius:13px;padding:12px;display:flex;gap:11px;align-items:center">
+              <div style="flex:0 0 34px;height:34px;border-radius:9px;background:#e2e8f0;display:grid;place-items:center;font-size:1rem">👥</div>
+              <div style="flex:1"><div style="font-family:'Plus Jakarta Sans';font-weight:700;color:#10302a;font-size:.88rem">Keep current lineups</div></div>
+              <div style="color:#94a3b8;font-weight:800">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACADEMY -->
+    <div class="panel" data-tab="academy">
+      <div class="persona reveal">
+        <div>
+          <div class="role-tag">The academy / club</div>
+          <h3>Full financial visibility — and the retention to back it</h3>
+          <p class="intro">For academy owners, Sadarah runs the money side as smoothly as the courts. Subscriptions, wallets and settlements are tracked, reconciled and reported in one place — so you always know exactly what came in, what's owed, and what's renewing.</p>
+          <div class="benefit"><div class="chk">✓</div><div><b>Financial visibility &amp; reporting</b><span>Every payment, wallet top-up and session fee in clear, real-time reports — revenue, outstanding balances and trends at a glance, no spreadsheets to reconcile.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Subscriptions management</b><span>Create plans, track renewals and issue credits in-app — recurring revenue becomes predictable, and renewals run on autopilot.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Automated settlements</b><span>Session fees and player balances are calculated and settled automatically, with a clean record of who paid and who owes what.</span></div></div>
+          <div class="benefit"><div class="chk">✓</div><div><b>Stickier members</b><span>Ratings and leaderboards create switching costs — players don’t want to abandon a hard-earned score, so renewals hold.</span></div></div>
+        </div>
+        <div class="persona-visual">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div style="font-size:.72rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em">Financial overview</div>
+            <div style="font-size:.72rem;color:var(--primary);font-weight:700">This month</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-end">
+            <div>
+              <div style="color:var(--faint);font-size:.74rem">Collected this month</div>
+              <b style="font-family:'Plus Jakarta Sans';font-size:1.7rem">JOD 12,480</b>
+            </div>
+            <div style="color:var(--green);font-size:.82rem;font-weight:700">+18% ▲</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:14px"><b style="font-family:'Plus Jakarta Sans';font-size:1.5rem">148</b><div style="color:var(--faint);font-size:.76rem">Active subscriptions</div></div>
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:14px"><b style="font-family:'Plus Jakarta Sans';font-size:1.5rem">92%</b><div style="color:var(--faint);font-size:.76rem">Renewal rate</div></div>
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:14px"><b style="font-family:'Plus Jakarta Sans';font-size:1.5rem;color:var(--green)">100%</b><div style="color:var(--faint);font-size:.76rem">Settlements reconciled</div></div>
+            <div style="background:#ffffff;border:1px solid var(--line);border-radius:13px;padding:14px"><b style="font-family:'Plus Jakarta Sans';font-size:1.5rem">0</b><div style="color:var(--faint);font-size:.76rem">Spreadsheets needed</div></div>
+          </div>
+          <div style="margin-top:12px;font-size:.72rem;color:var(--faint)">Illustrative figures.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ENGAGEMENT & ATTACHMENT -->
+<section id="engagement" style="background:linear-gradient(180deg,transparent,rgba(18,165,148,.07),transparent)">
+  <div class="wrap">
+    <div class="eng-hero reveal">
+      <div class="eyebrow">The real magic</div>
+      <h2>How Sadarah makes players <span class="grad-text">attached</span></h2>
+      <p>Great academies have always struggled with one thing: keeping players engaged between sessions. Sadarah is engineered around a habit loop — each visit ends with a reason to return.</p>
+    </div>
+
+    <!-- engagement loop -->
+    <div class="loop reveal">
+      <div class="step"><div class="n">1</div><b>Play a match</b><span>On court, in a session</span></div>
+      <div class="step"><div class="n">2</div><b>Rating moves</b><span>Instant, visible reward</span></div>
+      <div class="step"><div class="n">3</div><b>Check standing</b><span>Leaderboard &amp; badges</span></div>
+      <div class="step"><div class="n">4</div><b>Chase the gap</b><span>Catch the rival above</span></div>
+      <div class="step"><div class="n">5</div><b>Book next session</b><span>One tap, repeat</span></div>
+    </div>
+
+    <!-- attachment hooks -->
+    <div class="hooks">
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(242,106,46,.14)">📈</div><h4>Progress you own</h4></div>
+        <p>A rising rating and growing match history become a personal investment. Players feel they’re building something — and losing it would hurt.</p>
+        <div class="why">🧠 <b>Endowment effect:</b> we protect what feels ours.</div>
+      </div>
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(18,165,148,.14)">🏆</div><h4>Rivals &amp; rank</h4></div>
+        <p>Seeing someone 30 points ahead is an itch. Leaderboards manufacture friendly rivalry that pulls players back to close the gap.</p>
+        <div class="why">🧠 <b>Social comparison:</b> rank is a powerful motivator.</div>
+      </div>
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(47,201,138,.14)">🎖️</div><h4>Milestone badges</h4></div>
+        <p>First win, win streaks, loyalty, comebacks — each badge is a tiny, collectible celebration that rewards showing up, not just winning.</p>
+        <div class="why">🧠 <b>Variable rewards:</b> the next badge is always close.</div>
+      </div>
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(167,139,250,.14)">🥇</div><h4>Tier promotions</h4></div>
+        <p>Climbing from Bronze to Platinum gives long-term direction. Each tier is a goal big enough to train for over a season.</p>
+        <div class="why">🧠 <b>Goal gradient:</b> effort rises as the tier nears.</div>
+      </div>
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(239,90,90,.14)">🔔</div><h4>Timely nudges</h4></div>
+        <p>Session reminders, “a spot reclaimed,” rating changes and rank shifts bring players back at exactly the right moment.</p>
+        <div class="why">🧠 <b>Trigger → action:</b> well-timed cues build habits.</div>
+      </div>
+      <div class="hook reveal">
+        <div class="top"><div class="badge" style="background:rgba(18,165,148,.14)">🤝</div><h4>Belonging</h4></div>
+        <p>Shared sessions, rosters and an academy identity make Sadarah a community — not just a tracker. People stay where they belong.</p>
+        <div class="why">🧠 <b>Identity &amp; community:</b> the stickiest retention there is.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIER LADDER -->
+<section id="tiers">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <div class="eyebrow">A season-long goal</div>
+      <h2>Climb the tiers</h2>
+      <p>Every player starts at Bronze. The tier under your name is a status symbol — and a target that keeps the long game interesting.</p>
+    </div>
+    <div class="ladder reveal">
+      <div class="tier bronze"><div class="coin">🥉</div><b>Bronze</b><span>Just getting started</span></div>
+      <div class="tier silver"><div class="coin">🥈</div><b>Silver</b><span>Finding your rhythm</span></div>
+      <div class="tier gold"><div class="coin">🥇</div><b>Gold</b><span>A force on court</span></div>
+      <div class="tier plat"><div class="coin">💎</div><b>Platinum</b><span>Academy elite</span></div>
+      <div class="tier elite"><div class="coin">👑</div><b>Champion</b><span>Top of the table</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- UPCOMING / ROADMAP -->
+<section id="next">
+  <div class="wrap">
+    <div class="soon reveal">
+      <div class="soon-head">
+        <span class="soon-badge">🔒 In the making</span>
+        <h2>This is only the beginning</h2>
+        <p>What you see today is the foundation. Greater things are already being built behind the scenes — and we're keeping them under wraps a little longer.</p>
+      </div>
+      <div class="soon-grid">
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">✨</div>
+          <div class="blur">
+            <h4>Smarter match insights</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Coming soon</div>
+        </div>
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">🏆</div>
+          <div class="blur">
+            <h4>Tournaments &amp; events</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Coming soon</div>
+        </div>
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">🤝</div>
+          <div class="blur">
+            <h4>Social &amp; community</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Coming soon</div>
+        </div>
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">🎯</div>
+          <div class="blur">
+            <h4>Personal goals &amp; coaching</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Coming soon</div>
+        </div>
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">📡</div>
+          <div class="blur">
+            <h4>Live scoring &amp; streaks</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Coming soon</div>
+        </div>
+        <div class="soon-card reveal">
+          <div class="lock">🔒</div>
+          <div class="ico">🚀</div>
+          <div class="blur">
+            <h4>And much more</h4>
+            <div class="ln"></div><div class="ln"></div><div class="ln s"></div>
+          </div>
+          <div class="tease">Stay tuned</div>
+        </div>
+      </div>
+      <div class="soon-foot">The roadmap is bigger than the screen. Sign in and grow with us — the best of Sadarah is still ahead.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section style="padding-top:30px">
+  <div class="wrap">
+    <div class="trust reveal">
+      <div class="eyebrow" style="margin-bottom:8px">One platform, every level</div>
+      <h2 style="font-size:clamp(1.7rem,3vw,2.4rem)">Built for academies, clubs &amp; federations alike</h2>
+      <p style="color:var(--muted);max-width:640px;margin:14px auto 0">From a single academy running weekly sessions to a federation overseeing many clubs, Sadarah handles sessions, rosters and player engagement on one shared standard.</p>
+      <div class="stats">
+        <div class="stat"><b>3+</b><span>Sports &amp; growing</span></div>
+        <div class="stat"><b>1</b><span>Unified rating</span></div>
+        <div class="stat"><b>∞</b><span>Academies per player</span></div>
+        <div class="stat"><b>2</b><span>Languages — EN &amp; عربي</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPORTS -->
+<section style="padding-top:30px;padding-bottom:50px">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <div class="eyebrow">One platform, every court</div>
+      <h2>Built to grow across sports</h2>
+      <p>Live today, with more sports being added as the platform expands.</p>
+    </div>
+    <div class="sports reveal">
+      <div class="sport"><span class="e">🏓</span> Padel</div>
+      <div class="sport"><span class="e">🏸</span> Badminton</div>
+      <div class="sport"><span class="e">🟠</span> Ping Pong</div>
+      <div class="sport" style="border-style:dashed;color:var(--muted)"><span class="e">➕</span> More on the way</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / DOWNLOAD -->
+<section id="download">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Own your top spot.</h2>
+      <p>Sign in with your mobile number and your academy does the rest. Your progress, your rivals, your next match — all in Sadarah.</p>
+      <div class="store-btns">
+        <a class="store" href="#"><span class="e"></span><div style="text-align:left"><small>Download on the</small><b>App Store</b></div></a>
+        <a class="store" href="#"><span class="e">▶</span><div style="text-align:left"><small>Get it on</small><b>Google Play</b></div></a>
+      </div>
+      <div style="margin-top:18px;font-size:.85rem;color:#bfeae2;position:relative">Questions? <a href="mailto:support@sadarah.app" style="color:#fff;text-decoration:underline">support@sadarah.app</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div style="max-width:300px">
+        <a class="brand" href="#" style="margin-bottom:14px"><span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 2c.6 2.8-.9 4.3-2.4 5.8C8.4 9.4 6.7 11 6.7 14a5.3 5.3 0 0 0 10.6.3c0-2.2-1-3.6-1.9-4.8-.3 1-.9 1.6-1.7 2 .6-2.2-.3-4.4-1.2-6-.5-.9-1.2-1.6-1-3.5Z" fill="#f26a2e"/><path d="M12.2 11c.3 1.4-.5 2.1-1.2 2.9-.6.7-1.3 1.4-1.3 2.6a2.6 2.6 0 0 0 5.2.1c0-1-.5-1.7-1-2.4-.2.5-.5.8-.9 1 .3-1.1-.1-2.2-.6-3-.2-.4-.4-.7-.2-1.2Z" fill="#ffd34d"/></svg></span> Sadarah</a>
+        <p style="color:var(--muted);font-size:.92rem">The player companion app for modern sports academies. <span class="accent arabic">صدارة</span> — your top spot.</p>
+      </div>
+      <div class="links">
+        <div class="col"><b>Product</b>
+          <a href="#rating">The Rating</a><a href="#value">Why it matters</a><a href="#engagement">Engagement</a><a href="#tiers">Tiers</a>
+        </div>
+        <div class="col"><b>For</b>
+          <a href="#personas">Players</a><a href="#personas">Academy owners</a><a href="#personas">Session moderators</a><a href="#next">What's next</a>
+        </div>
+        <div class="col"><b>Company</b>
+          <a href="privacy.html">Privacy Policy</a><a href="mailto:support@sadarah.app">Support</a><a href="#download">Download</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Sadarah. All rights reserved.</span>
+      <span>support@sadarah.app</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Persona tabs
+  const tabs=document.querySelectorAll('.tab');
+  const panels=document.querySelectorAll('.panel');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.setAttribute('aria-selected','false'));
+    t.setAttribute('aria-selected','true');
+    const id=t.dataset.tab;
+    panels.forEach(p=>p.setAttribute('data-active', p.dataset.tab===id?'true':'false'));
+  }));
+
+  // Reveal on scroll
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Animated rating ring + counter
+  const arc=document.getElementById('ringArc');
+  const num=document.getElementById('ringNum');
+  const target=1486, pct=.78, circ=628;
+  let started=false;
+  const ringObs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting && !started){
+        started=true;
+        arc.style.transition='stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)';
+        requestAnimationFrame(()=>{arc.style.strokeDashoffset=circ*(1-pct);});
+        const dur=1500, t0=performance.now();
+        const tick=(t)=>{const k=Math.min((t-t0)/dur,1);const e2=1-Math.pow(1-k,3);
+          num.textContent=Math.round(target*e2).toLocaleString();
+          if(k<1)requestAnimationFrame(tick);};
+        requestAnimationFrame(tick);
+      }
+    });
+  },{threshold:.4});
+  ringObs.observe(document.querySelector('.ring'));
+</script>
+</body>
+</html>
