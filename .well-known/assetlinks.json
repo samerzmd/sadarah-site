@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.evoapp.sports",
-      "sha256_cert_fingerprints": ["REPLACE_WITH_YOUR_APP_SIGNING_SHA256_FINGERPRINT"]
+      "sha256_cert_fingerprints": [
+        "55:0A:96:70:10:50:33:6D:82:08:2E:9B:42:67:ED:D7:E2:69:DB:D8:2E:91:53:61:4A:65:F2:56:CA:7C:BE:54",
+        "EB:D3:87:4E:44:E5:A4:58:74:81:4D:46:F5:B5:C2:16:22:1D:F0:96:B4:92:05:C9:6B:90:2B:5F:A8:75:BC:9D"
+      ]
     }
   }
 ]
