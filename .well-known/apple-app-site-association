@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["W42ZCU5L99.com.evoapp.sports"],
+        "components": [
+          { "/": "/join/", "comment": "Sadarah session invite links (query form)" },
+          { "/": "/join/*", "comment": "Sadarah session invite links" }
+        ]
+      }
+    ]
+  }
+}
